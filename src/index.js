@@ -37,9 +37,44 @@ const MORSE_TABLE = {
     '-----':  '0',
 };
 
+let expr = "00101010100000000010001011101000101110100000111111**********00001011110000111111000010111000101110100000111010";
+
 function decode(expr) {
     // write your solution here
+    let decode = '';
+    let arr = expr.split('');   // делим строку на массив символов
+    // console.log(arr);
+    while (arr.length > 0) {
+        let letter = arr.splice( 0, 10);    // делим на массивы по 10 символов, т.е. на буквы
+        while ( letter[0] === '0') {
+            letter.shift();                 // убираем 0 в начале каждой буквы
+            // console.log(letter);
+        }
+        if (letter[0] === '*') {            // это для пробела
+            letter = ['*'];
+            MORSE_TABLE['*'] = ' ';          // добавляем пробел в таблицу символов
+        } else {
+            for( let i = 0; i < letter.length - 1; i +=2) {
+                if( letter[i + 1] === '0') {
+                    letter[i] = '';             // все 1 на четных индексах не нужны
+                    letter[i + 1] = '.';        // 0 на нечетных индексах - это точки
+                }
+                if (letter[i + 1] === '1') {
+                    letter[i] = '';                 // все 1 на четных индексах не нужны
+                    letter[i + 1] = '-';           // 1 на нечетных индексах - это точки
+                }
+            }
+        }
+        letter = letter.join('');            // собираем частично букву
+        // console.log(letter);
+        decode = `${decode}${MORSE_TABLE[letter]}`;    // ищем по ключам в исходном объекте
+        
+    }
+        // console.log(decode);
+    return decode;
 }
+
+console.log( decode(expr));
 
 module.exports = {
     decode
